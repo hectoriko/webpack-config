@@ -10,13 +10,35 @@ if (process.env.NODE_ENV === "production") {
 
 module.exports = {
   mode: mode,
+  target: target,
+
+  output: {
+    assetModuleFilename: "images/[hash][ext][query]",
+  },
 
   module: {
     rules: [
       {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        // type: "asset/inline", // Adds the image as inline attribute
+        // type: "asset/resource", // Links to the image as external file
+        type: "asset", // Webpack decides if the image will be inline or a externa file based on size
+
+        // Incrementamos el tamaño máximo de archivo para que considere
+        // si lo añade como inline, o como archivo externo
+        /* parser: {
+          dataUrlCondition: {
+            maxSize: 30 * 1024,
+          }
+        } */
+      },
+      {
         test: /\.(s[ac]|c)ss$/i,
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: { publicPath: "" },
+          },
           "css-loader",
           "postcss-loader",
           "sass-loader",
